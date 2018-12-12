@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import TodoItem from './components/TodoItem';
 
+const api = 'https://demo-todos-api.azurewebsites.net/api/todo';
 class App extends Component {
   constructor(props) {
     super(props)
@@ -19,10 +20,8 @@ class App extends Component {
     const todos = this.state.todos.map(todo => <TodoItem key={todo.id} name={todo.name} />);
     return (
       <div>
-
         <input type="text" value={this.state.value} onChange={(e) => this.handleChange(e)} />
         <button onClick={(e) => this.handleCreateTodo(e)}>Add</button>
-
         <ul>{todos}</ul>
       </div>
     );
@@ -30,21 +29,38 @@ class App extends Component {
 
   componentDidMount() {
     console.log('componentDidMount');
-    this.setState(
-      {
-        hasData: true,
-        todos: [{ id: 1, name: 'foo', isCompleted: false }]
-      });
+    this.getTodos();
     //console.log('todos', this.state.todos);
+  }
+
+  getTodos() {
+    fetch(api)
+      .then(response => response.json())
+      .then(data => {
+        this.setState(
+          {
+            hasData: true,
+            todos: data
+          });
+      });
   }
 
   handleChange(event) {
     this.setState({ name: event.target.value });
-
   }
 
-  handleCreateTodo(event) {
-    this.setState({ todos: [...this.state.todos, { id: this.state.todos.length + 1, name: this.state.name, isCompleted: false }] });
+  handleCreateTodo() {
+    fetch(api, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name: this.state.name })
+    }).then(rawResponse => rawResponse.json())
+      .then(content => {
+        console.log(content);
+        this.getTodos();
+      });
   }
 }
 
