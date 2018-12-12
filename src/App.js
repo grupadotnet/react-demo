@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import TodoItem from './components/TodoItem';
 
 class App extends Component {
   constructor(props) {
@@ -13,9 +14,9 @@ class App extends Component {
   render() {
     console.log('render');
     if (!this.state.hasData) return 'waiting...';
-    return (
-      <div>Hello React!</div>
-    );
+
+    const todos = this.state.todos.map(todo => <TodoItem key={todo.id} name={todo.name} />);
+    return <div><ul>{todos}</ul></div>;
   }
 
   componentDidMount() {
