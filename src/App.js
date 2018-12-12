@@ -7,7 +7,8 @@ class App extends Component {
     super(props)
     this.state = {
       todos: [],
-      hasData: false
+      hasData: false,
+      name: ''
     };
     console.log('constructor');
   }
@@ -16,7 +17,15 @@ class App extends Component {
     if (!this.state.hasData) return 'waiting...';
 
     const todos = this.state.todos.map(todo => <TodoItem key={todo.id} name={todo.name} />);
-    return <div><ul>{todos}</ul></div>;
+    return (
+      <div>
+
+        <input type="text" value={this.state.value} onChange={(e) => this.handleChange(e)} />
+        <button onClick={(e) => this.handleCreateTodo(e)}>Add</button>
+
+        <ul>{todos}</ul>
+      </div>
+    );
   }
 
   componentDidMount() {
@@ -27,6 +36,15 @@ class App extends Component {
         todos: [{ id: 1, name: 'foo', isCompleted: false }]
       });
     //console.log('todos', this.state.todos);
+  }
+
+  handleChange(event) {
+    this.setState({ name: event.target.value });
+
+  }
+
+  handleCreateTodo(event) {
+    this.setState({ todos: [...this.state.todos, { id: this.state.todos.length + 1, name: this.state.name, isCompleted: false }] });
   }
 }
 
